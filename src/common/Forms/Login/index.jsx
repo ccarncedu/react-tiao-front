@@ -1,18 +1,18 @@
 import React, { useState, useContext } from "react";
 import { Container, TextField, Button, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../../providers/AuthProvider";
 
 const LoginForm = () => {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const success = await login(email, password);
-    if (success) navigate("/");
+    if (success) history.push("/");
   };
 
   return (

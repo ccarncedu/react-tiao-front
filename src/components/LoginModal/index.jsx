@@ -12,7 +12,17 @@ const LoginModal = ({ open, handleClose }) => {
 
   return (
     <Modal open={open} onClose={handleClose}>
-      <Box sx={{ width: 400, margin: 'auto', marginTop: '10%', padding: 2, backgroundColor: 'white', borderRadius: 1 }}>
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: 1
+      }}>
         {isLogin ? <LoginForm /> : <RegisterForm />}
         <Button onClick={toggleForm} fullWidth>
           {isLogin ? "Não tem uma conta? Registre-se" : "Já tem uma conta? Faça login"}
