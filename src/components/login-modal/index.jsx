@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Box, Button } from "@mui/material";
-import LoginForm from "../../common/Forms/Login";
-import RegisterForm from "../../common/Forms/Register";
+import LoginForm from "../../common/Forms/login";
+import RegisterForm from "../../common/Forms/register";
 
 const LoginModal = ({ open, handleClose }) => {
   const [isLogin, setIsLogin] = useState(true);
-
+  console.log(isLogin, 'islogin')
   const toggleForm = () => {
     setIsLogin(!isLogin);
   };

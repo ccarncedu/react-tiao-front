@@ -2,14 +2,15 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8000/api/links";
 
-export const fetchLinks = async () => {
+export const fetchLinks = async (page = 1, perPage = 5) => {
   try {
     const response = await axios.get(API_URL, {
+      params: { page, per_page: perPage },
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error("Erro ao buscar links:", error);
     throw error;

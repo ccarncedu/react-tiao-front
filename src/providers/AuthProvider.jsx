@@ -11,7 +11,6 @@ const AuthProvider = ({ children }) => {
     if (token) {
       localStorage.setItem("token", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      fetchUser();
     } else {
       localStorage.removeItem("token");
       delete axios.defaults.headers.common["Authorization"];
@@ -19,19 +18,11 @@ const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/user");
-      setUser(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar usuário:", error);
-    }
-  };
-
   const login = async (email, password) => {
     try {
       const response = await axios.post("http://localhost:8000/api/login", { email, password });
       setToken(response.data.token);
+      setUser(response.data.user); 
       return true;
     } catch (error) {
       console.error("Erro ao logar", error);
@@ -43,6 +34,7 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post("http://localhost:8000/api/register", { email, password });
       setToken(response.data.token);
+      setUser(response.data.user);
       return true;
     } catch (error) {
       console.error("Erro ao registrar", error);
@@ -52,6 +44,7 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setToken(null);
+    setUser(null); 
   };
 
   return <AuthContext.Provider value={{ token, user, login, register, logout }}>{children}</AuthContext.Provider>;
