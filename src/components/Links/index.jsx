@@ -6,13 +6,15 @@ import {
   Paper,
   Pagination
 } from "@mui/material";
-import { fetchLinks, addLink, deleteLink } from "../../services/links.service";
+import { fetchLinks, addLink, deleteLink, editLink, approveLink } from "../../services/links.service";
 import { AuthContext } from "../../providers/AuthProvider";
 import AddLink from "./components/AddLink";
 import LinkItem from "./components/List";
 
 const Links = () => {
   const { token, user } = useContext(AuthContext);
+  console.log(token, 'token')
+  console.log(user, 'user')
   const [links, setLinks] = useState([]);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -58,6 +60,26 @@ const Links = () => {
     }
   };
 
+  const handleEditLink = async (id, data) => {
+    try {
+      await editLink(id, data);
+      const updatedLinks = links.map(link => link.id === id ? { ...link, ...data } : link);
+      setLinks(updatedLinks);
+    } catch (error) {
+      console.error("Erro ao editar link:", error);
+    }
+  };
+
+  const handleApproveLink = async (id) => {
+    try {
+      await approveLink(id);
+      const updatedLinks = links.map(link => link.id === id ? { ...link, approved: true } : link);
+      setLinks(updatedLinks);
+    } catch (error) {
+      console.error("Erro ao aprovar link:", error);
+    }
+  };
+
   const handleChangePage = (event, value) => {
     setPage(value);
   };
@@ -75,7 +97,14 @@ const Links = () => {
 
         <List>
           {links.map((link, index) => (
-            <LinkItem key={link.id} link={link} user={user} handleDeleteLink={handleDeleteLink} />
+            <LinkItem
+              key={link.id}
+              link={link}
+              user={user}
+              handleDeleteLink={handleDeleteLink}
+              handleApproveLink={handleApproveLink}
+              handleEditLink={handleEditLink}
+            />
           ))}
         </List>
 

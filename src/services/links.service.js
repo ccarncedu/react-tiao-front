@@ -42,3 +42,29 @@ export const deleteLink = async (id) => {
     throw error;
   }
 };
+
+export const editLink = async (id, data) => {
+  try {
+    await axios.put(`${API_URL}/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao editar link:", error);
+    throw error;
+  }
+};
+
+export const approveLink = async (id) => {
+  try {
+    await axios.put(`${API_URL}/${id}/approve`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao aprovar link:", error);
+    throw error;
+  }
+};

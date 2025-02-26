@@ -5,7 +5,7 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
 
   useEffect(() => {
     if (token) {
@@ -22,7 +22,8 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post("http://localhost:8000/api/login", { email, password });
       setToken(response.data.token);
-      setUser(response.data.user); 
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       return true;
     } catch (error) {
       console.error("Erro ao logar", error);
@@ -33,8 +34,10 @@ const AuthProvider = ({ children }) => {
   const register = async (email, password) => {
     try {
       const response = await axios.post("http://localhost:8000/api/register", { email, password });
+      console.log(response.data, 'response'); // Adicione este log para verificar a resposta da API
       setToken(response.data.token);
       setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       return true;
     } catch (error) {
       console.error("Erro ao registrar", error);
@@ -44,10 +47,15 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setToken(null);
-    setUser(null); 
+    setUser(null);
+    localStorage.removeItem("user");
   };
 
-  return <AuthContext.Provider value={{ token, user, login, register, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ token, user, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;
