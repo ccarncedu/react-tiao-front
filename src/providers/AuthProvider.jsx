@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+function AuthProvider  ({ children })  {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
 
@@ -34,7 +34,6 @@ const AuthProvider = ({ children }) => {
   const register = async (email, password) => {
     try {
       const response = await axios.post("http://localhost:8000/api/register", { email, password });
-      console.log(response.data, 'response'); // Adicione este log para verificar a resposta da API
       setToken(response.data.token);
       setUser(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data.user));

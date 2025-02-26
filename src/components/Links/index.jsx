@@ -8,13 +8,11 @@ import {
 } from "@mui/material";
 import { fetchLinks, addLink, deleteLink, editLink, approveLink } from "../../services/links.service";
 import { AuthContext } from "../../providers/AuthProvider";
-import AddLink from "./components/AddLink";
+import AddLink from "./components/Add-Link";
 import LinkItem from "./components/List";
 
-const Links = () => {
+function Links () {
   const { token, user } = useContext(AuthContext);
-  console.log(token, 'token')
-  console.log(user, 'user')
   const [links, setLinks] = useState([]);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -23,18 +21,20 @@ const Links = () => {
   const perPage = 5;
 
   useEffect(() => {
-    const getLinks = async () => {
-      const data = await fetchLinks(page, perPage);
-      if (data) {
-        const sortedData = data.data.sort((a, b) => Number(b.views) - Number(a.views));
-        setLinks(sortedData);
-        setTotalPages(data.total_pages);
-      } else {
-        setLinks([]);
-      }
-    };
-    getLinks();
-  }, [page]);
+    if (token) {
+      const getLinks = async () => {
+        const data = await fetchLinks(page, perPage);
+        if (data) {
+          const sortedData = data.data.sort((a, b) => Number(b.views) - Number(a.views));
+          setLinks(sortedData);
+          setTotalPages(data.total_pages);
+        } else {
+          setLinks([]);
+        }
+      };
+      getLinks();
+    }
+  }, [page, token]);
 
   const handleAddLink = async () => {
     try {

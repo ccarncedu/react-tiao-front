@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AuthProvider from "./providers/AuthProvider";
-import Links from "./components/links/index";
-import LoginModal from "./components/login-modal";
+import Links from "./components/links";
+import LoginModal from "./components/Login-Modal";
 import { Box } from "@mui/material";
 
-const App = () => {
+function App () {
   const [open, setOpen] = useState(true);
   const token = localStorage.getItem("token");
 
@@ -37,7 +37,11 @@ const App = () => {
     checkAuth();
   }, [token]);
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    if (localStorage.getItem("token")) {
+      setOpen(false);
+    }
+  };
 
   return (
     <AuthProvider>
@@ -51,6 +55,8 @@ const App = () => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
+            filter: open ? "blur(5px)" : "none",
+            pointerEvents: open ? "none" : "auto",
           }}
         >
           <LoginModal open={open} handleClose={handleClose} />
