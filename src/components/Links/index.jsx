@@ -2,24 +2,14 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   Container,
   Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
   List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Stack,
   Paper,
-  TextField,
   Pagination
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { fetchLinks, addLink, deleteLink } from "../../services/links.service";
 import { AuthContext } from "../../providers/AuthProvider";
+import AddLink from "./components/AddLink";
+import LinkItem from "./components/List";
 
 const Links = () => {
   const { token, user } = useContext(AuthContext);
@@ -80,91 +70,12 @@ const Links = () => {
         </Typography>
 
         {token && (
-          <Card sx={{ mb: 3, p: 3, bgcolor: "#2A2A2A", color: "white", borderRadius: 2 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ textAlign: "center", color: "#fff" }}>
-                Adicionar Novo Link
-              </Typography>
-              <Stack spacing={2}>
-                <TextField
-                  label="Adicione aqui a URL do seu vídeo do YouTube"
-                  variant="outlined"
-                  fullWidth
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  InputLabelProps={{ style: { color: "#bbb" } }}
-                  InputProps={{
-                    style: { color: "white", backgroundColor: "#3A3A3A", borderRadius: 5 },
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": { borderColor: "#555" },
-                      "&:hover fieldset": { borderColor: "#888" },
-                      "&.Mui-focused fieldset": { borderColor: "#90CAF9" },
-                    },
-                  }}
-                />
-              </Stack>
-            </CardContent>
-            <CardActions>
-              <Button
-                onClick={handleAddLink}
-                variant="contained"
-                fullWidth
-                sx={{
-                  bgcolor: "#1976d2",
-                  "&:hover": { bgcolor: "#1565c0" },
-                  py: 1.5,
-                  fontSize: "1rem",
-                }}
-              >
-                Adicionar Link
-              </Button>
-            </CardActions>
-          </Card>
+          <AddLink url={url} setUrl={setUrl} handleAddLink={handleAddLink} />
         )}
 
         <List>
           {links.map((link, index) => (
-            <Card key={link.id} sx={{ mb: 2, bgcolor: "#2A2A2A", color: "white" }}>
-              <CardContent>
-                <ListItem>
-                  <img
-                    src={link.thumbnail}
-                    alt={link.title}
-                    style={{ width: "100px", borderRadius: "5px", marginRight: "15px" }}
-                  />
-                  <ListItemText
-                    primary={link.title}
-                    secondary={
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: "none", color: "#90CAF9" }}
-                      >
-                        {link.url}
-                      </a>
-                    }
-                  />
-                </ListItem>
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
-                  <Typography variant="body2" color="white">
-                    <VisibilityIcon sx={{ verticalAlign: "middle" }} /> {parseInt(link.views).toLocaleString()}
-                  </Typography>
-                  <Typography variant="body2" color="white">
-                    <ThumbUpIcon sx={{ verticalAlign: "middle" }} /> {parseInt(link.likes).toLocaleString()}
-                  </Typography>
-                </Stack>
-              </CardContent>
-              {user?.is_admin && (
-                <CardActions>
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteLink(link.id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </CardActions>
-              )}
-            </Card>
+            <LinkItem key={link.id} link={link} user={user} handleDeleteLink={handleDeleteLink} />
           ))}
         </List>
 
