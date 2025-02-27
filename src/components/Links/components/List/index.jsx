@@ -15,16 +15,26 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
+import { act } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 
 function LinkItem({ link, user, handleDeleteLink, handleApproveLink, handleEditLink }) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editedUrl, setEditedUrl] = React.useState(link.url);
+  const [isApproved, setIsApproved] = React.useState(link.is_approved);
 
   const handleSave = () => {
     handleEditLink(link.id, { url: editedUrl });
     setIsEditing(false);
   };
+
+  const handleApprove = async (id) => {
+    await handleApproveLink(id);
+    act(() => {
+      setIsApproved(true);
+    });
+  };
+  
 
   return (
     <Card sx={{ mb: 2, bgcolor: "#2A2A2A", color: "white" }}>
@@ -69,13 +79,13 @@ function LinkItem({ link, user, handleDeleteLink, handleApproveLink, handleEditL
           </Typography>
         </Stack>
       </CardContent>
-      {user?.is_admin && (
+      {Boolean(user?.is_admin) && (
         <CardActions>
           <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteLink(link.id)} color="error">
             <DeleteIcon />
           </IconButton>
-          {!link.is_approved && (
-            <IconButton edge="end" aria-label="approve" onClick={() => handleApproveLink(link.id)} color="success">
+          {!isApproved && (
+            <IconButton edge="end" aria-label="approve" onClick={() => handleApprove(link.id)} color="success">
               <ThumbUpIcon />
             </IconButton>
           )}

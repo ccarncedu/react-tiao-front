@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import AuthProvider from "./providers/AuthProvider";
+import AuthProvider, { AuthContext } from "./providers/AuthProvider";
 import Links from "./components/links";
-import LoginModal from "./components/Login-Modal";
+import LoginModal from "./components/login";
 import { Box } from "@mui/material";
 
-function App () {
-  const [open, setOpen] = useState(true);
+function AppContent ()  {
+  const { open, setOpen } = useContext(AuthContext);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -35,38 +35,36 @@ function App () {
     };
 
     checkAuth();
-  }, [token]);
-
-  const handleClose = () => {
-    if (localStorage.getItem("token")) {
-      setOpen(false);
-    }
-  };
+  }, [token, setOpen]);
 
   return (
-    <AuthProvider>
-      <Router>
-        <Box
-          sx={{
-            bgcolor: "#121212",
-            width: "100%",
-            color: "white",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            filter: open ? "blur(5px)" : "none",
-            pointerEvents: open ? "none" : "auto",
-          }}
-        >
-          <LoginModal open={open} handleClose={handleClose} />
-          <Switch>
-            <Route path="/" component={Links} />
-          </Switch>
-        </Box>
-      </Router>
-    </AuthProvider>
+    <Box
+      sx={{
+        bgcolor: "#121212",
+        width: "100%",
+        color: "white",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        filter: open ? "blur(5px)" : "none",
+        pointerEvents: open ? "none" : "auto",
+      }}
+    >
+      <LoginModal open={open} />
+      <Switch>
+        <Route path="/" component={Links} />
+      </Switch>
+    </Box>
   );
 };
+
+const App = () => (
+  <AuthProvider>
+    <Router>
+      <AppContent />
+    </Router>
+  </AuthProvider>
+);
 
 export default App;

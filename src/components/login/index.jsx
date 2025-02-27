@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Modal, Box, Button, Typography, Fade, Stack } from "@mui/material";
 import LoginForm from "../../common/Forms/login";
 import RegisterForm from "../../common/Forms/register";
+import { AuthContext } from "../../providers/AuthProvider";
 
-function LoginModal({ open, handleClose }) {
+function LoginModal({ open }) {
   const [isLogin, setIsLogin] = useState(true);
+  const { login, register } = useContext(AuthContext);
 
   const toggleForm = () => {
     setIsLogin(!isLogin);
   };
 
+  const handleLogin = async (email, password) => {
+    const success = await login(email, password);
+    if (success) {
+    }
+  };
+
+  const handleRegister = async (name, email, password) => {
+    const success = await register(name, email, password);
+    if (success) {
+    }
+  };
+
   return (
-    <Modal open={open} onClose={handleClose} closeAfterTransition>
+    <Modal open={open} closeAfterTransition>
       <Fade in={open}>
         <Box
           sx={{
@@ -31,7 +45,7 @@ function LoginModal({ open, handleClose }) {
             {isLogin ? "Entrar" : "Criar Conta"}
           </Typography>
 
-          {isLogin ? <LoginForm /> : <RegisterForm />}
+          {isLogin ? <LoginForm onSubmit={handleLogin} /> : <RegisterForm onSubmit={handleRegister} />}
 
           <Stack spacing={2} mt={2}>
             <Button
@@ -40,16 +54,6 @@ function LoginModal({ open, handleClose }) {
               sx={{ textTransform: "none", fontSize: "0.9rem" }}
             >
               {isLogin ? "Não tem uma conta? Registre-se" : "Já tem uma conta? Faça login"}
-            </Button>
-
-            <Button
-              onClick={handleClose}
-              variant="contained"
-              color="error"
-              fullWidth
-              sx={{ mt: 1 }}
-            >
-              Fechar
             </Button>
           </Stack>
         </Box>

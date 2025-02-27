@@ -5,23 +5,29 @@ import {
   CardActions,
   Button,
   Stack,
-  TextField
+  TextField,
 } from "@mui/material";
 
 function AddLink({ url, setUrl, handleAddLink }) {
   return (
-    <Card sx={{ mb: 3, p: 3, bgcolor: "#2A2A2A", color: "white", borderRadius: 2 }}>
+    <Card
+      sx={{ mb: 3, p: 3, bgcolor: "#2A2A2A", color: "white", borderRadius: 2 }}
+    >
       <CardContent>
         <Stack spacing={2}>
           <TextField
             label="Adicione aqui a URL do seu vídeo do YouTube"
-            varnt="outlined"
-            fulialWidth
+            variant="outlined"
+            fullWidth
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             InputLabelProps={{ style: { color: "#bbb" } }}
             InputProps={{
-              style: { color: "white", backgroundColor: "#3A3A3A", borderRadius: 5 },
+              style: {
+                color: "white",
+                backgroundColor: "#3A3A3A",
+                borderRadius: 5,
+              },
             }}
             sx={{
               "& .MuiOutlinedInput-root": {
@@ -50,6 +56,6 @@ function AddLink({ url, setUrl, handleAddLink }) {
       </CardActions>
     </Card>
   );
-};
+}
 
 export default AddLink;

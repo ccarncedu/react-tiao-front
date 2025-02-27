@@ -11,7 +11,7 @@ import { AuthContext } from "../../providers/AuthProvider";
 import AddLink from "./components/Add-Link";
 import LinkItem from "./components/List";
 
-function Links () {
+function Links() {
   const { token, user } = useContext(AuthContext);
   const [links, setLinks] = useState([]);
   const [title, setTitle] = useState("");
@@ -19,60 +19,75 @@ function Links () {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const perPage = 5;
+  
+  const reloadLinks = async (retryCount = 3) => {
+    if (!token) {
+      if (retryCount > 0) {
+        setTimeout(() => reloadLinks(retryCount - 1), 500);
+      }
+      return;
+    }
+
+    try {
+      const data = await fetchLinks(page, perPage, token);
+      if (data) {
+        const sortedData = data.data.sort((a, b) => Number(b.views) - Number(a.views));
+        setLinks(sortedData);
+        setTotalPages(data.total_pages);
+      } else {
+        setLinks([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar links:", error);
+    }
+  };
 
   useEffect(() => {
     if (token) {
-      const getLinks = async () => {
-        const data = await fetchLinks(page, perPage);
-        if (data) {
-          const sortedData = data.data.sort((a, b) => Number(b.views) - Number(a.views));
-          setLinks(sortedData);
-          setTotalPages(data.total_pages);
-        } else {
-          setLinks([]);
-        }
-      };
-      getLinks();
+      reloadLinks();
     }
-  }, [page, token]);
+  }, [token, page]);
 
   const handleAddLink = async () => {
+    if (!token) return;
+
     try {
-      await addLink(title, url);
-      const data = await fetchLinks(page, perPage);
-      setLinks(data.data);
-      setTotalPages(data.total_pages);
+      await addLink(title, url, token);
       setTitle("");
       setUrl("");
+      reloadLinks();
     } catch (error) {
       console.error("Erro ao adicionar link:", error);
     }
   };
 
   const handleDeleteLink = async (id) => {
+    if (!token) return;
+
     try {
-      await deleteLink(id);
-      const data = await fetchLinks(page, perPage);
-      setLinks(data.data);
-      setTotalPages(data.total_pages);
+      await deleteLink(id, token);
+      reloadLinks(); 
     } catch (error) {
       console.error("Erro ao deletar link:", error);
     }
   };
 
   const handleEditLink = async (id, data) => {
+    if (!token) return;
+
     try {
-      await editLink(id, data);
-      const updatedLinks = links.map(link => link.id === id ? { ...link, ...data } : link);
-      setLinks(updatedLinks);
+      await editLink(id, data, token);
+      reloadLinks();
     } catch (error) {
       console.error("Erro ao editar link:", error);
     }
   };
 
   const handleApproveLink = async (id) => {
+    if (!token) return;
+
     try {
-      await approveLink(id);
+      await approveLink(id, token);
       const updatedLinks = links.map(link => link.id === id ? { ...link, approved: true } : link);
       setLinks(updatedLinks);
     } catch (error) {
@@ -83,6 +98,7 @@ function Links () {
   const handleChangePage = (event, value) => {
     setPage(value);
   };
+
 
   return (
     <Container maxWidth="md" sx={{ bgcolor: "#121212", minHeight: "100vh", py: 4 }}>
@@ -96,7 +112,7 @@ function Links () {
         )}
 
         <List>
-          {links.map((link, index) => (
+          {links.map((link) => (
             <LinkItem
               key={link.id}
               link={link}
@@ -117,6 +133,6 @@ function Links () {
       </Paper>
     </Container>
   );
-};
+}
 
 export default Links;
