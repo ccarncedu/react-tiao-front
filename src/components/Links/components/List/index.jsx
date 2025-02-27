@@ -25,11 +25,25 @@ function LinkItem({ link, user, handleDeleteLink, handleApproveLink, handleEditL
   const [isApproved, setIsApproved] = useState(link.is_approved);
   const [feedback, setFeedback] = useState({ open: false, message: "", severity: "info" });
 
+  const isValidYouTubeUrl = (url) => {
+    const regex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+    return regex.test(url);
+  };
+
   const handleSave = async () => {
+    if (!isValidYouTubeUrl(editedUrl)) {
+      setFeedback({ open: true, message: "Por favor, insira um link válido do YouTube.", severity: "error" });
+      return;
+    }
+
     try {
-      await handleEditLink(link.id, { url: editedUrl });
-      setFeedback({ open: true, message: "Link editado com sucesso!", severity: "success" });
-      setIsEditing(false);
+      const response = await handleEditLink(link.id, { url: editedUrl });
+      if (response.success) {
+        setFeedback({ open: true, message: "Link editado com sucesso!", severity: "success" });
+        setIsEditing(false);
+      } else {
+        setFeedback({ open: true, message: "Erro ao editar link. Tente novamente.", severity: "error" });
+      }
     } catch (error) {
       setFeedback({ open: true, message: "Erro ao editar link. Tente novamente.", severity: "error" });
     }
