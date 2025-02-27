@@ -13,4 +13,13 @@ yarn test
 ```
 
 
+```
+Tecnologias usadas
+React Js
+Docker
+Jest
+Material UI
+```
+
+
 Perfil Github: https://github.com/educcarnn

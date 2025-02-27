@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -6,17 +6,37 @@ import {
   Button,
   Stack,
   TextField,
+  Snackbar,
+  Alert,
+  Typography,
 } from "@mui/material";
 
 function AddLink({ url, setUrl, handleAddLink }) {
+  const [feedback, setFeedback] = useState({ open: false, message: "", severity: "info" });
+
+  const handleSubmit = async () => {
+    if (!url.trim()) {
+      setFeedback({ open: true, message: "Por favor, insira um link válido do YouTube.", severity: "error" });
+      return;
+    }
+
+    try {
+      await handleAddLink();
+      setFeedback({ open: true, message: "Link adicionado com sucesso!", severity: "success" });
+    } catch (error) {
+      setFeedback({ open: true, message: "Erro ao adicionar link. Tente novamente.", severity: "error" });
+    }
+  };
+
   return (
-    <Card
-      sx={{ mb: 3, p: 3, bgcolor: "#2A2A2A", color: "white", borderRadius: 2 }}
-    >
+    <Card sx={{ mb: 3, p: 3, bgcolor: "#2A2A2A", color: "white", borderRadius: 2 }}>
       <CardContent>
+        <Typography variant="h6" gutterBottom sx={{ textAlign: "center", color: "#FFD700" }}>
+          Adicionar Link do YouTube
+        </Typography>
         <Stack spacing={2}>
           <TextField
-            label="Adicione aqui a URL do seu vídeo do YouTube"
+            label="Insira a URL do vídeo"
             variant="outlined"
             fullWidth
             value={url}
@@ -41,7 +61,7 @@ function AddLink({ url, setUrl, handleAddLink }) {
       </CardContent>
       <CardActions>
         <Button
-          onClick={handleAddLink}
+          onClick={handleSubmit}
           variant="contained"
           fullWidth
           sx={{
@@ -54,6 +74,16 @@ function AddLink({ url, setUrl, handleAddLink }) {
           Adicionar Link
         </Button>
       </CardActions>
+
+      <Snackbar
+        open={feedback.open}
+        autoHideDuration={4000}
+        onClose={() => setFeedback({ ...feedback, open: false })}
+      >
+        <Alert onClose={() => setFeedback({ ...feedback, open: false })} severity={feedback.severity} sx={{ width: "100%" }}>
+          {feedback.message}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 }

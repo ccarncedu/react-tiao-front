@@ -40,7 +40,7 @@ describe("LoginForm Component", () => {
     });
   });
 
-  test("mostra mensagem de erro ao falhar no login", async () => {
+  test("shows error message on failed login", async () => {
     mockOnSubmit.mockResolvedValue(false);
     render(<LoginForm onSubmit={mockOnSubmit} />);
 

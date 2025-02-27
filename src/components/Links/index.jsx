@@ -4,8 +4,11 @@ import {
   Typography,
   List,
   Paper,
-  Pagination
+  Pagination,
+  Box,
+  Divider,
 } from "@mui/material";
+import { GiGuitarHead } from "react-icons/gi";
 import { fetchLinks, addLink, deleteLink, editLink, approveLink } from "../../services/links.service";
 import { AuthContext } from "../../providers/AuthProvider";
 import AddLink from "./components/Add-Link";
@@ -19,7 +22,7 @@ function Links() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const perPage = 5;
-  
+
   const reloadLinks = async (retryCount = 3) => {
     if (!token) {
       if (retryCount > 0) {
@@ -57,7 +60,7 @@ function Links() {
       setUrl("");
       reloadLinks();
     } catch (error) {
-      console.error("Erro ao adicionar link:", error);
+      throw new Error("Erro ao adicionar link");
     }
   };
 
@@ -66,7 +69,7 @@ function Links() {
 
     try {
       await deleteLink(id, token);
-      reloadLinks(); 
+      reloadLinks();
     } catch (error) {
       console.error("Erro ao deletar link:", error);
     }
@@ -88,7 +91,7 @@ function Links() {
 
     try {
       await approveLink(id, token);
-      const updatedLinks = links.map(link => link.id === id ? { ...link, approved: true } : link);
+      const updatedLinks = links.map((link) => (link.id === id ? { ...link, approved: true } : link));
       setLinks(updatedLinks);
     } catch (error) {
       console.error("Erro ao aprovar link:", error);
@@ -99,17 +102,50 @@ function Links() {
     setPage(value);
   };
 
-
   return (
-    <Container maxWidth="md" sx={{ bgcolor: "#121212", minHeight: "100vh", py: 4 }}>
-      <Paper elevation={4} sx={{ bgcolor: "#1E1E1E", color: "white", padding: 3, borderRadius: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Tião Carreiro e Pardinho
-        </Typography>
+    <Container
+      maxWidth="md"
+      sx={{
+        bgcolor: { xs: "transparent", md: "#3E2723" },
+        minHeight: "100vh",
+        py: 4,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          bgcolor: "#5D4037",
+          color: "white",
+          padding: 3,
+          borderRadius: 3,
+          width: "100%",
+          maxWidth: "600px",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mb: 2,
+          }}
+        >
+          <GiGuitarHead size={32} color="#FFD700" />
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{ fontFamily: "Georgia, serif", fontWeight: "bold", ml: 1 }}
+          >
+            Tião Carreiro & Pardinho
+          </Typography>
+        </Box>
 
-        {token && (
-          <AddLink url={url} setUrl={setUrl} handleAddLink={handleAddLink} />
-        )}
+        <Divider sx={{ bgcolor: "#FFD700", mb: 2 }} />
+
+        {token && <AddLink url={url} setUrl={setUrl} handleAddLink={handleAddLink} />}
 
         <List>
           {links.map((link) => (

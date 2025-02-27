@@ -38,7 +38,7 @@ describe("Links Component", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText("Tião Carreiro e Pardinho")).toBeInTheDocument();
+      expect(screen.getByText("Tião Carreiro & Pardinho")).toBeInTheDocument();
     });
   });
 
