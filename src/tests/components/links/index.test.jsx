@@ -68,7 +68,7 @@ describe("Links Component", () => {
       </AuthContext.Provider>
     );
 
-    fireEvent.change(screen.getByLabelText("Adicione aqui a URL do seu vídeo do YouTube"), { target: { value: "https://youtube.com/3" } });
+    fireEvent.change(screen.getByLabelText("Insira a URL do vídeo"), { target: { value: "https://youtube.com/3" } });
     fireEvent.click(screen.getByRole("button", { name: /adicionar link/i }));
 
     await waitFor(() => expect(addLink).toHaveBeenCalledWith("", "https://youtube.com/3", "fake-token"));
